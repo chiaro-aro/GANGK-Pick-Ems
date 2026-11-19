@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#191919">
+  <meta name="description" content="Make your calls. Trust your instincts. Friday, November 27, 2026">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="GANGK TEKKEN PICK'EM">
+  <meta property="og:description" content="Make your calls. Trust your instincts. Predict the Swiss survivors, Grand Finalists, and champion.">
+  <meta name="twitter:card" content="summary">
+  <title>GANGK TEKKEN PICK'EM</title>
+  <style>
+    :root {
+      --ink: #191919;
+      --paper: #f2eee4;
+      --paper-deep: #e7e0d2;
+      --red: #c63b2f;
+      --muted: #6e6a62;
+      --line: rgba(25,25,25,.22);
+      --green: #3c684e;
+      --shadow: 0 12px 30px rgba(25,25,25,.08);
+      --serif: Georgia, 'Times New Roman', serif;
+      --sans: Arial, Helvetica, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(rgba(25,25,25,.055) .65px, transparent .65px) 0 0/5px 5px,
+        var(--paper);
+      font-family: var(--sans);
+    }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .topbar {
+      background: var(--ink);
+      color: var(--paper);
+      border-bottom: 5px solid var(--red);
+    }
+    .topbar-inner, .page, .footer-inner { width: min(100% - 34px, 1000px); margin: 0 auto; }
+    .topbar-inner {
+      min-height: 54px; display:flex; align-items:center; justify-content:space-between; gap:16px;
+      text-transform:uppercase; letter-spacing:.13em; font-size:10px; font-weight:800;
+    }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand-mark { color:#fff; background:var(--red); padding:7px 9px; font-size:12px; letter-spacing:.08em; }
+    .edition { color:#bdb8ad; text-align:right; }
+    .page { padding: 28px 0 60px; }
+    .hero {
+      display:grid; grid-template-columns: 1fr auto; gap:24px; align-items:end;
+      border-bottom: 2px solid var(--ink); padding: 14px 0 25px; position:relative;
+    }
+    .kicker { color:var(--red); font-weight:900; text-transform:uppercase; letter-spacing:.2em; font-size:11px; margin-bottom:12px; }
+    h1 {
+      font-family:var(--serif); font-size:clamp(48px, 9vw, 92px); line-height:.82;
+      letter-spacing:-.065em; text-transform:uppercase; margin:0; max-width:740px;
+    }
+    h1 span { display:block; color:var(--red); font-style:italic; }
+    .hero-note {
+      border:1.5px solid var(--ink); padding:12px 14px; transform:rotate(2deg);
+      font-family:var(--serif); font-weight:bold; font-size:16px; line-height:1.1;
+      text-align:center; min-width:112px; text-transform:uppercase;
+    }
+    .hero-note b { display:block; font-family:var(--sans); color:var(--red); font-size:25px; letter-spacing:-.06em; }
+    .event-strip {
+      display:flex; flex-wrap:wrap; gap:8px 22px; padding:13px 0 17px;
+      border-bottom:1px solid var(--line); color:#4b4842; font-size:11px; font-weight:800;
+      letter-spacing:.09em; text-transform:uppercase;
+    }
+    .event-strip span::before { content:'■'; color:var(--red); margin-right:8px; font-size:8px; vertical-align:2px; }
+    .intro { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; padding:22px 0 16px; }
+    .intro p { max-width:610px; margin:0; color:#4e4a44; line-height:1.55; font-size:14px; }
+    .deadline { flex:0 0 auto; border-left:3px solid var(--red); padding-left:10px; font-size:10px; line-height:1.35; font-weight:900; text-transform:uppercase; letter-spacing:.1em; }
+    .layout { display:grid; grid-template-columns:minmax(0, 1fr) 260px; gap:22px; align-items:start; margin-top:14px; }
+    .form-column { min-width:0; }
+    .side-column { position:sticky; top:18px; }
+    .panel, .question-card, .side-card, .editor-panel {
+      background:rgba(255,253,247,.68); border:1px solid var(--line); box-shadow:var(--shadow);
+    }
+    .question-card { margin-bottom:13px; padding:19px; }
+    .question-head { display:flex; align-items:flex-start; gap:13px; margin-bottom:13px; }
+    .number {
+      background:var(--ink); color:var(--paper); font-family:var(--serif); font-size:20px;
+      min-width:32px; height:32px; display:grid; place-items:center; font-style:italic;
+    }
+    .question-title { margin:0 0 4px; font-family:var(--serif); font-size:23px; line-height:1.04; letter-spacing:-.025em; }
+    .question-sub { margin:0; color:var(--muted); font-size:12px; line-height:1.45; }
+    .name-input, .message-input, .editor-input {
+      width:100%; border:1px solid #aaa295; background:#fffdf7; color:var(--ink); border-radius:0;
+      padding:13px 14px; outline:none; transition:border-color .15s, box-shadow .15s;
+    }
+    .name-input:focus, .message-input:focus, .editor-input:focus { border-color:var(--red); box-shadow:0 0 0 2px rgba(198,59,47,.12); }
+    .name-input::placeholder, .message-input::placeholder { color:#9b958a; }
+    .choice-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+    .choice {
+      position:relative; display:flex; align-items:center; gap:10px; min-height:48px;
+      border:1px solid #bcb4a6; background:#fffdf7; padding:10px 12px; cursor:pointer;
+      font-size:13px; font-weight:800; line-height:1.2; transition:background .15s,border-color .15s,color .15s;
+      user-select:none;
+    }
+    .choice:hover { border-color:var(--ink); }
+    .choice input { position:absolute; opacity:0; pointer-events:none; }
+    .choice .check {
+      display:grid; place-items:center; flex:0 0 17px; height:17px; width:17px;
+      border:1.5px solid #7c766c; font-size:11px; color:transparent;
+    }
+    .choice.selected { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+    .choice.selected .check { border-color:var(--paper); color:var(--paper); }
+    .choice.selected .check::after { content:'✓'; }
+    .choice.disabled { opacity:.38; cursor:not-allowed; }
+    .choice small { margin-left:auto; color:inherit; opacity:.6; font-size:9px; letter-spacing:.08em; }
+    .counter-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; color:var(--muted); font-size:11px; }
+    .counter { color:var(--ink); font-weight:900; letter-spacing:.05em; text-transform:uppercase; }
+    .step-locked { background:#e9e3d8; border:1px dashed #aaa295; padding:14px; color:#777065; font-size:12px; line-height:1.45; }
+    .step-locked strong { color:var(--ink); }
+    .question-card.locked { opacity:.76; }
+    .question-card.completed { border-left:4px solid var(--green); }
+    .question-card.completed .number { background:var(--green); }
+    .message-input { min-height:116px; resize:vertical; line-height:1.45; }
+    .message-hint { display:flex; justify-content:space-between; gap:10px; color:var(--muted); font-size:10px; margin-top:7px; }
+    .submit-row { display:flex; align-items:center; gap:14px; margin:18px 0 0; }
+    .submit-btn {
+      background:var(--red); color:white; border:0; padding:15px 22px; font-weight:900;
+      text-transform:uppercase; letter-spacing:.13em; font-size:11px; box-shadow:4px 4px 0 var(--ink);
+      transition:transform .12s, box-shadow .12s, background .12s;
+    }
+    .submit-btn:hover { background:#a92f26; transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
+    .submit-btn:disabled { opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
+    .submit-note { color:var(--muted); font-size:10px; line-height:1.4; }
+    .side-card { padding:17px; margin-bottom:13px; }
+    .side-label { color:var(--red); font-size:10px; text-transform:uppercase; font-weight:900; letter-spacing:.17em; margin-bottom:8px; }
+    .side-card h3 { font-family:var(--serif); font-size:22px; line-height:1; margin:0 0 10px; }
+    .side-card p { color:#605b52; font-size:12px; line-height:1.5; margin:0; }
+    .progress-list { list-style:none; padding:0; margin:0; }
+    .progress-list li { display:flex; align-items:center; gap:9px; padding:9px 0; border-top:1px solid var(--line); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+    .progress-dot { width:8px; height:8px; border:1px solid #938c80; border-radius:50%; }
+    .progress-list li.done .progress-dot { border-color:var(--green); background:var(--green); }
+    .mini-rule { border-top:2px solid var(--ink); margin:13px 0 10px; }
+    .stamp { display:inline-block; color:var(--red); border:2px solid var(--red); padding:6px 9px; transform:rotate(-4deg); font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
+    .footer { background:var(--ink); color:var(--paper); }
+    .footer-inner { padding:19px 0; display:flex; justify-content:space-between; gap:15px; align-items:center; font-size:10px; text-transform:uppercase; letter-spacing:.11em; }
+    .footer strong { color:#fff; }
+    .editor-wrap { margin:0 0 20px; }
+    .editor-panel { padding:20px; border:2px dashed var(--red); }
+    .editor-panel h2 { font-family:var(--serif); font-size:28px; margin:0 0 4px; }
+    .editor-panel p { color:var(--muted); font-size:12px; line-height:1.45; margin:0 0 15px; }
+    .editor-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .editor-field { display:flex; flex-direction:column; gap:5px; }
+    .editor-field label { text-transform:uppercase; letter-spacing:.09em; font-size:9px; font-weight:900; }
+    .editor-input { padding:10px; font-size:12px; }
+    .roster-editor { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; margin-top:8px; }
+    .editor-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:15px; }
+    .editor-btn { border:1px solid var(--ink); color:var(--ink); background:transparent; padding:11px 14px; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
+    .editor-btn.primary { background:var(--ink); color:var(--paper); }
+    .editor-warning { background:#f4e2dd; padding:10px 12px; margin-top:13px; font-size:11px; line-height:1.45; color:#6e2b24; }
+    .success-card { display:none; padding:28px 22px; margin:12px 0 18px; border:2px solid var(--green); background:#eef0e7; text-align:center; }
+    .success-card.show { display:block; }
+    .success-card h2 { font-family:var(--serif); font-size:36px; margin:0 0 8px; }
+    .success-card p { margin:0; color:#4e5e4e; font-size:13px; line-height:1.5; }
+    .error { color:#a52f25; font-size:11px; font-weight:700; margin-top:10px; display:none; }
+    .error.show { display:block; }
+    .hidden { display:none !important; }
+    @media (max-width:760px) {
+      .layout { grid-template-columns:1fr; }
+      .side-column { position:static; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+      .side-card { margin-bottom:0; }
+      .hero { grid-template-columns:1fr auto; gap:10px; }
+      .hero-note { min-width:85px; padding:9px; font-size:12px; }
+      .hero-note b { font-size:20px; }
+    }
+    @media (max-width:520px) {
+      .topbar-inner, .page, .footer-inner { width:min(100% - 24px, 1000px); }
+      .topbar-inner { min-height:48px; font-size:8px; }
+      .page { padding-top:20px; }
+      .hero { grid-template-columns:1fr; }
+      .hero-note { position:absolute; right:2px; top:10px; transform:rotate(3deg) scale(.82); transform-origin:top right; }
+      h1 { font-size:clamp(48px, 15vw, 72px); max-width:82%; }
+      .intro { display:block; }
+      .deadline { display:inline-block; margin-top:12px; }
+      .question-card { padding:15px; }
+      .choice-grid { grid-template-columns:1fr; }
+      .side-column { grid-template-columns:1fr; }
+      .editor-grid, .roster-editor { grid-template-columns:1fr; }
+      .footer-inner { align-items:flex-start; flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+  <script id="site-config" type="application/json">{"eventName":"GANGK TEKKEN PICK'EM","tagline":"Make your calls. Trust your instincts.","date":"Friday, November 27, 2026","venue":"Cafe Abong","location":"San Carlos City, Pangasinan","deadline":"Before the first match","players":["Chiaro","Karlet","Zephy","Zon","DoubleFlay","Tekato","Cusp","Jinn"],"responseUrl":"https://script.google.com/macros/s/AKfycbxMeCeLFzbN4q7vtC_CpymLFyFo5ZO5vHypzFLW6gthN3QHajbkiCJm13H8bQpGpG_-/exec"}</script>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span class="brand-mark">GANGK</span><span>Community Fighting Game Event</span></div>
+      <div class="edition">The Pick'Em Desk · Vol. 01</div>
+    </div>
+  </div>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <div class="kicker">The official tournament prediction sheet</div>
+        <h1>Make your <span>calls.</span></h1>
+      </div>
+      <div class="hero-note"><b>01—08</b>One winner.<br>Eight contenders.</div>
+    </section>
+    <div class="event-strip">
+      <span id="event-date">Saturday, November 28, 2026</span>
+      <span id="event-venue">Cafe Abong</span>
+      <span id="event-location">San Carlos City, Pangasinan</span>
+    </div>
+    <section class="intro">
+      <p id="event-tagline">Make your calls. Trust your instincts. Predict who makes it through Swiss, who reaches Grand Finals, and who takes the whole thing. Your message to the players will be read at the end of the ceremony.</p>
+      <div class="deadline">Entries close<br><span id="event-deadline">Before the first match</span></div>
+    </section>
+
+    <section id="editor-wrap" class="editor-wrap">
+      <div class="editor-panel">
+        <div class="side-label">Organizer controls · Edit mode</div>
+        <h2>Customize your Pick'Em.</h2>
+        <p>Edit the event details and roster below. Preview your changes, then export a new HTML file. Upload that exported file to your website host to publish the changes.</p>
+        <div class="editor-grid">
+          <div class="editor-field"><label for="edit-event">Website title</label><input class="editor-input" id="edit-event"></div>
+          <div class="editor-field"><label for="edit-tagline">Tagline / introduction</label><input class="editor-input" id="edit-tagline"></div>
+          <div class="editor-field"><label for="edit-date">Event date</label><input class="editor-input" id="edit-date"></div>
+          <div class="editor-field"><label for="edit-venue">Venue</label><input class="editor-input" id="edit-venue"></div>
+          <div class="editor-field"><label for="edit-location">City / location</label><input class="editor-input" id="edit-location"></div>
+          <div class="editor-field"><label for="edit-deadline">Entry deadline</label><input class="editor-input" id="edit-deadline"></div>
+        </div>
+        <div class="side-label" style="margin-top:17px">Eight-player roster</div>
+        <div id="roster-editor" class="roster-editor"><div class="editor-field"><label>Player 1</label><input class="editor-input" maxlength="40" data-player-index="0"></div><div class="editor-field"><label>Player 2</label><input class="editor-input" maxlength="40" data-player-index="1"></div><div class="editor-field"><label>Player 3</label><input class="editor-input" maxlength="40" data-player-index="2"></div><div class="editor-field"><label>Player 4</label><input class="editor-input" maxlength="40" data-player-index="3"></div><div class="editor-field"><label>Player 5</label><input class="editor-input" maxlength="40" data-player-index="4"></div><div class="editor-field"><label>Player 6</label><input class="editor-input" maxlength="40" data-player-index="5"></div><div class="editor-field"><label>Player 7</label><input class="editor-input" maxlength="40" data-player-index="6"></div><div class="editor-field"><label>Player 8</label><input class="editor-input" maxlength="40" data-player-index="7"></div></div>
+        <div class="editor-field" style="margin-top:13px">
+          <label for="edit-endpoint">Google Apps Script response URL</label>
+          <input class="editor-input" id="edit-endpoint" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+        <div class="editor-actions">
+          <button type="button" class="editor-btn" id="preview-config">Preview changes</button>
+          <button type="button" class="editor-btn primary" id="export-site">Download updated website</button>
+        </div>
+        <div class="editor-warning"><strong>Important:</strong> The downloaded HTML contains your edited roster and settings. Upload that new file to your hosting service to update the public link. The response URL connects the form to your Google Sheet. The edit screen is not password-protected; do not share the edit-mode URL publicly.</div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <div class="form-column">
+        <form id="pickem-form" novalidate="">
+          <section class="question-card" id="q-name">
+            <div class="question-head"><div class="number">01</div><div><h2 class="question-title">What's your name?</h2><p class="question-sub">So we know who's making these predictions.</p></div></div>
+            <input class="name-input" id="entrant-name" name="entrant-name" maxlength="60" autocomplete="name" placeholder="Your name or player tag" required="">
+          </section>
+
+          <section class="question-card" id="q-swiss">
+            <div class="question-head"><div class="number">02</div><div><h2 class="question-title">Who survives the Swiss?</h2><p class="question-sub">Select exactly 4 of the 8 players. These are your picks to advance.</p></div></div>
+            <div class="choice-grid" id="swiss-options"><label class="choice"><input type="checkbox" value="PLAYER 01" aria-label="PLAYER 01"><span class="check"></span><span>PLAYER 01</span></label><label class="choice"><input type="checkbox" value="PLAYER 02" aria-label="PLAYER 02"><span class="check"></span><span>PLAYER 02</span></label><label class="choice"><input type="checkbox" value="PLAYER 03" aria-label="PLAYER 03"><span class="check"></span><span>PLAYER 03</span></label><label class="choice"><input type="checkbox" value="PLAYER 04" aria-label="PLAYER 04"><span class="check"></span><span>PLAYER 04</span></label><label class="choice"><input type="checkbox" value="PLAYER 05" aria-label="PLAYER 05"><span class="check"></span><span>PLAYER 05</span></label><label class="choice"><input type="checkbox" value="PLAYER 06" aria-label="PLAYER 06"><span class="check"></span><span>PLAYER 06</span></label><label class="choice"><input type="checkbox" value="PLAYER 07" aria-label="PLAYER 07"><span class="check"></span><span>PLAYER 07</span></label><label class="choice"><input type="checkbox" value="PLAYER 08" aria-label="PLAYER 08"><span class="check"></span><span>PLAYER 08</span></label></div>
+            <div class="counter-row"><span>Pick four players</span><span class="counter" id="swiss-counter">0 / 4 selected</span></div>
+          </section>
+
+          <section class="question-card locked" id="q-de">
+            <div class="question-head"><div class="number">03</div><div><h2 class="question-title">Who survives Double Elimination?</h2><p class="question-sub">Choose 2 of your 4 Swiss survivors. These two reach Grand Finals.</p></div></div>
+            <div class="step-locked" id="de-locked"><strong>Locked.</strong> Select your four Swiss survivors first.</div>
+            <div class="choice-grid hidden" id="de-options"></div>
+            <div class="counter-row hidden" id="de-counter-row"><span>Pick two finalists</span><span class="counter" id="de-counter">0 / 2 selected</span></div>
+          </section>
+
+          <section class="question-card locked" id="q-champion">
+            <div class="question-head"><div class="number">04</div><div><h2 class="question-title">Who wins it all?</h2><p class="question-sub">Choose the champion from your two Grand Finalists.</p></div></div>
+            <div class="step-locked" id="champion-locked"><strong>Locked.</strong> Select your two Grand Finalists first.</div>
+            <div class="choice-grid hidden" id="champion-options"></div>
+          </section>
+
+          <section class="question-card" id="q-message">
+            <div class="question-head"><div class="number">05</div><div><h2 class="question-title">Any message for the players?</h2><p class="question-sub">This will be read aloud at the end of the ceremony. Keep it heartfelt, funny, or ruthless.</p></div></div>
+            <textarea class="message-input" id="player-message" maxlength="1000" placeholder="Leave the players a message... (optional)"></textarea>
+            <div class="message-hint"><span>Optional · Up to 1,000 characters</span><span id="message-count">0 / 1000</span></div>
+          </section>
+
+          <div class="error" id="form-error" role="alert"></div>
+          <div class="submit-row">
+            <button type="submit" class="submit-btn" id="submit-btn">Submit my Pick'Em →</button>
+            <div class="submit-note">One entry per person, please.<br>Predictions lock when entries close.</div>
+          </div>
+        </form>
+        <div class="success-card" id="success-card" role="status">
+          <div class="stamp">Entry received</div>
+          <h2>You're on the board.</h2>
+          <p id="success-copy">Your Pick'Em has been submitted. Good luck.</p>
+        </div>
+      </div>
+
+      <aside class="side-column">
+        <div class="side-card">
+          <div class="side-label">How it works</div>
+          <h3>Predict the run.</h3>
+          <p>Pick four players to survive Swiss. From those four, pick the two who reach Grand Finals. Then call the champion.</p>
+          <div class="mini-rule"></div>
+          <ul class="progress-list" id="progress-list">
+            <li id="progress-name"><span class="progress-dot"></span>Your name</li>
+            <li id="progress-swiss"><span class="progress-dot"></span>4 Swiss survivors</li>
+            <li id="progress-de"><span class="progress-dot"></span>2 Grand Finalists</li>
+            <li id="progress-champion"><span class="progress-dot"></span>1 Champion</li>
+            <li id="progress-message"><span class="progress-dot"></span>Player message</li>
+          </ul>
+        </div>
+        <div class="side-card">
+          <div class="side-label">The house rule</div>
+          <h3>No do-overs.</h3>
+          <p>Submit your predictions before the first match. Once the tournament starts, your calls are locked. There are no edits after submission.</p>
+        </div>
+        <div class="side-card">
+          <div class="side-label">GANGK</div>
+          <h3>Random draw.<br>Same record.<br>Do not lose twice.</h3>
+          <p>Eight players enter. One leaves with the title.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner"><span><strong>GANGK</strong> · The Pick'Em Desk</span><span>Fight hard. Call your shot.</span></div>
+  </footer>
+
+  <script>
+    (() => {
+      const configNode = document.getElementById('site-config');
+      let config;
+      try { config = JSON.parse(configNode.textContent); }
+      catch (e) { config = {eventName:"GANGK TEKKEN PICK'EM", tagline:"Make your calls. Trust your instincts.", date:"Saturday, November 28, 2026", venue:"Cafe Abong", location:"San Carlos City, Pangasinan", deadline:"Before the first match", players:["PLAYER 01","PLAYER 02","PLAYER 03","PLAYER 04","PLAYER 05","PLAYER 06","PLAYER 07","PLAYER 08"], responseUrl:""}; }
+
+      const $ = (id) => document.getElementById(id);
+      const state = { swiss: [], finalists: [], champion: '', submitted: false };
+      const editMode = new URLSearchParams(location.search).get('edit') === '1';
+
+      function safeText(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+      function refreshMeta() {
+        document.title = config.eventName || "GANGK TEKKEN PICK'EM";
+        document.querySelector('meta[name="description"]').content = `${config.tagline || 'Make your calls.'} ${config.date || ''}`;
+        document.querySelector('meta[property="og:title"]').content = config.eventName || "GANGK TEKKEN PICK'EM";
+        document.querySelector('meta[property="og:description"]').content = `${config.tagline || 'Make your calls.'} Predict the Swiss survivors, Grand Finalists, and champion.`;
+      }
+      function renderEvent() {
+        $('event-date').textContent = config.date;
+        $('event-venue').textContent = config.venue;
+        $('event-location').textContent = config.location;
+        $('event-tagline').textContent = `${config.tagline} Predict who makes it through Swiss, who reaches Grand Finals, and who takes the whole thing. Your message to the players will be read at the end of the ceremony.`;
+        $('event-deadline').textContent = config.deadline;
+        refreshMeta();
+      }
+      function markProgress(id, done) { $(id).classList.toggle('done', !!done); }
+
+      function makeChoice(name, selected, disabled, type, onChange) {
+        const label = document.createElement('label');
+        label.className = `choice${selected ? ' selected' : ''}${disabled ? ' disabled' : ''}`;
+        const input = document.createElement('input');
+        input.type = type;
+        input.checked = !!selected;
+        input.disabled = !!disabled;
+        input.value = name;
+        input.setAttribute('aria-label', name);
+        input.addEventListener('change', () => onChange(name, input.checked));
+        const check = document.createElement('span');
+        check.className = 'check';
+        const text = document.createElement('span');
+        text.textContent = name;
+        label.append(input, check, text);
+        return label;
+      }
+
+      function renderSwiss() {
+        const host = $('swiss-options'); host.innerHTML = '';
+        config.players.forEach(name => {
+          const selected = state.swiss.includes(name);
+          const disabled = !selected && state.swiss.length >= 4;
+          host.appendChild(makeChoice(name, selected, disabled, 'checkbox', (n, checked) => {
+            if (checked && state.swiss.length < 4) state.swiss.push(n);
+            if (!checked) state.swiss = state.swiss.filter(x => x !== n);
+            state.finalists = state.finalists.filter(x => state.swiss.includes(x));
+            if (!state.finalists.includes(state.champion)) state.champion = '';
+            renderAll();
+          }));
+        });
+        $('swiss-counter').textContent = `${state.swiss.length} / 4 selected`;
+        $('q-swiss').classList.toggle('completed', state.swiss.length === 4);
+      }
+      function renderDE() {
+        const active = state.swiss.length === 4;
+        $('de-locked').classList.toggle('hidden', active);
+        $('de-options').classList.toggle('hidden', !active);
+        $('de-counter-row').classList.toggle('hidden', !active);
+        $('q-de').classList.toggle('locked', !active);
+        $('q-de').classList.toggle('completed', state.finalists.length === 2);
+        const host = $('de-options'); host.innerHTML = '';
+        if (active) state.swiss.forEach(name => {
+          const selected = state.finalists.includes(name);
+          const disabled = !selected && state.finalists.length >= 2;
+          host.appendChild(makeChoice(name, selected, disabled, 'checkbox', (n, checked) => {
+            if (checked && state.finalists.length < 2) state.finalists.push(n);
+            if (!checked) state.finalists = state.finalists.filter(x => x !== n);
+            if (!state.finalists.includes(state.champion)) state.champion = '';
+            renderAll();
+          }));
+        });
+        $('de-counter').textContent = `${state.finalists.length} / 2 selected`;
+      }
+      function renderChampion() {
+        const active = state.finalists.length === 2;
+        $('champion-locked').classList.toggle('hidden', active);
+        $('champion-options').classList.toggle('hidden', !active);
+        $('q-champion').classList.toggle('locked', !active);
+        $('q-champion').classList.toggle('completed', !!state.champion);
+        const host = $('champion-options'); host.innerHTML = '';
+        if (active) state.finalists.forEach(name => {
+          host.appendChild(makeChoice(name, state.champion === name, false, 'radio', (n, checked) => {
+            state.champion = checked ? n : '';
+            renderAll();
+          }));
+        });
+      }
+      function renderAll() {
+        renderSwiss(); renderDE(); renderChampion();
+        markProgress('progress-name', !!$('entrant-name').value.trim());
+        markProgress('progress-swiss', state.swiss.length === 4);
+        markProgress('progress-de', state.finalists.length === 2);
+        markProgress('progress-champion', !!state.champion);
+        markProgress('progress-message', !!$('player-message').value.trim());
+        $('submit-btn').disabled = state.submitted;
+      }
+
+      function showError(message) { $('form-error').textContent = message; $('form-error').classList.add('show'); }
+      function clearError() { $('form-error').textContent = ''; $('form-error').classList.remove('show'); }
+      function download(filename, content) {
+        const blob = new Blob([content], {type:'text/html;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1200);
+      }
+
+      $('entrant-name').addEventListener('input', renderAll);
+      $('player-message').addEventListener('input', () => {
+        $('message-count').textContent = `${$('player-message').value.length} / 1000`;
+        renderAll();
+      });
+
+      $('pickem-form').addEventListener('submit', async (event) => {
+        event.preventDefault(); clearError();
+        if (state.submitted) return;
+        const name = $('entrant-name').value.trim();
+        if (!name) return showError('Please enter your name or player tag.');
+        if (state.swiss.length !== 4) return showError('Select exactly four players who you think will survive Swiss.');
+        if (state.finalists.length !== 2) return showError('Select exactly two of your Swiss survivors to reach Grand Finals.');
+        if (!state.champion) return showError('Choose your tournament champion.');
+        if (!state.finalists.includes(state.champion)) return showError('Your champion must be one of your two Grand Finalists.');
+
+        const payload = {
+          submittedAt: new Date().toISOString(),
+          name,
+          swissSurvivors: state.swiss,
+          grandFinalists: state.finalists,
+          champion: state.champion,
+          message: $('player-message').value.trim(),
+          event: config.eventName
+        };
+        const button = $('submit-btn'); button.disabled = true; button.textContent = 'Submitting…';
+        try {
+          if (config.responseUrl && /^https:\/\/script\.google\.com\/macros\/s\//.test(config.responseUrl)) {
+            await fetch(config.responseUrl, {
+              method:'POST', mode:'no-cors',
+              headers:{'Content-Type':'text/plain;charset=utf-8'},
+              body:JSON.stringify(payload)
+            });
+            $('success-copy').textContent = 'Your browser sent your entry request. Thank you for playing; the organizer can verify it in the response sheet.';
+          } else {
+            const key = 'gangk_pickem_local_entries';
+            const entries = JSON.parse(localStorage.getItem(key) || '[]');
+            entries.push(payload); localStorage.setItem(key, JSON.stringify(entries));
+            $('success-copy').textContent = 'This page is in preview mode: your entry was saved only in this browser. The organizer must connect a Google Sheets response URL before collecting public entries.';
+          }
+          state.submitted = true;
+          $('pickem-form').classList.add('hidden');
+          $('success-card').classList.add('show');
+          window.scrollTo({top:$('success-card').getBoundingClientRect().top + window.scrollY - 30, behavior:'smooth'});
+        } catch (err) {
+          button.disabled = false; button.textContent = "Submit my Pick'Em →";
+          showError('We could not send your entry. Please check your connection and try again.');
+        }
+      });
+
+      function setEditorValues() {
+        $('edit-event').value = config.eventName || '';
+        $('edit-tagline').value = config.tagline || '';
+        $('edit-date').value = config.date || '';
+        $('edit-venue').value = config.venue || '';
+        $('edit-location').value = config.location || '';
+        $('edit-deadline').value = config.deadline || '';
+        $('edit-endpoint').value = config.responseUrl || '';
+        const roster = $('roster-editor'); roster.innerHTML = '';
+        config.players.forEach((player, i) => {
+          const wrap = document.createElement('div'); wrap.className = 'editor-field';
+          const label = document.createElement('label'); label.textContent = `Player ${i+1}`;
+          const input = document.createElement('input'); input.className='editor-input'; input.value=player; input.maxLength=40; input.dataset.playerIndex=i;
+          wrap.append(label,input); roster.appendChild(wrap);
+        });
+      }
+      function readEditorValues() {
+        const players = [...$('roster-editor').querySelectorAll('input')].map(input => input.value.trim());
+        if (players.length !== 8 || players.some(x => !x)) throw new Error('Please enter all eight player names.');
+        if (new Set(players.map(x => x.toLowerCase())).size !== 8) throw new Error('Each player name must be unique.');
+        const endpoint = $('edit-endpoint').value.trim();
+        if (endpoint && !/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec/.test(endpoint)) throw new Error('The response URL should be a deployed Google Apps Script web app URL ending in /exec.');
+        return {
+          eventName:$('edit-event').value.trim() || "GANGK TEKKEN PICK'EM",
+          tagline:$('edit-tagline').value.trim() || 'Make your calls. Trust your instincts.',
+          date:$('edit-date').value.trim(), venue:$('edit-venue').value.trim(), location:$('edit-location').value.trim(),
+          deadline:$('edit-deadline').value.trim() || 'Before the first match', players, responseUrl:endpoint
+        };
+      }
+      function applyConfig(next) {
+        config = next;
+        configNode.textContent = JSON.stringify(config).replace(/</g, '\\u003c');
+        state.swiss = []; state.finalists = []; state.champion = ''; state.submitted = false;
+        $('pickem-form').classList.remove('hidden'); $('success-card').classList.remove('show');
+        $('submit-btn').textContent = "Submit my Pick'Em →"; $('submit-btn').disabled = false;
+        renderEvent(); renderAll();
+      }
+      if (editMode) {
+        $('editor-wrap').classList.remove('hidden'); setEditorValues();
+        $('preview-config').addEventListener('click', () => {
+          try { applyConfig(readEditorValues()); clearError(); window.scrollTo({top:0,behavior:'smooth'}); }
+          catch (err) { alert(err.message); }
+        });
+        $('export-site').addEventListener('click', () => {
+          try {
+            const next = readEditorValues();
+            const clone = document.documentElement.cloneNode(true);
+            clone.querySelector('#site-config').textContent = JSON.stringify(next).replace(/</g, '\\u003c');
+            clone.querySelector('title').textContent = next.eventName;
+            clone.querySelector('meta[name="description"]').setAttribute('content', `${next.tagline} ${next.date}`);
+            clone.querySelector('meta[property="og:title"]').setAttribute('content', next.eventName);
+            clone.querySelector('meta[property="og:description"]').setAttribute('content', `${next.tagline} Predict the Swiss survivors, Grand Finalists, and champion.`);
+            const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+            download('GANGK-Pickem-Custom.html', html);
+          } catch (err) { alert(err.message); }
+        });
+      }
+      renderEvent(); renderAll();
+    })();
+  </script>
+
+
+</body></html>
